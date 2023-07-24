@@ -19,9 +19,17 @@ def get_user_input():
 
 def display_conversation(memory_buffer):
     final_memory_buffer = ""
-    for index, line in enumerate(memory_buffer.split('\n')):
-        if (index % 2 == 0):
-            final_memory_buffer += colored("You: ","light_yellow") + colored(line[7:],"yellow") + "\n"
-        else:
-            final_memory_buffer += colored(line[:3],"light_cyan") + colored(line[3:],"cyan") + "\n"
+    if (type(memory_buffer) == list):
+        for index, line in enumerate(memory_buffer):
+            if (index % 2 == 0):
+                final_memory_buffer += colored("You: ","light_yellow") + colored(line.content,"yellow") + "\n"
+            else:
+                final_memory_buffer += colored("AI: ","light_cyan") + colored(line.content,"cyan") + "\n"
+
+    if (type(memory_buffer) == str):
+        for index, line in enumerate(memory_buffer.split('\n')):
+            if (index % 2 == 0):
+                final_memory_buffer += colored("You: ","light_yellow") + colored(line[7:],"yellow") + "\n"
+            else:
+                final_memory_buffer += colored(line[:3],"light_cyan") + colored(line[3:],"cyan") + "\n"
     print(final_memory_buffer)
