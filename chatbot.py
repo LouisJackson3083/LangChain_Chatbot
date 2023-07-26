@@ -126,15 +126,27 @@ openai.api_key = os.environ['OPENAI_API_KEY']
 prompt_segment = ChatPromptTemplate.from_template(
     """
     ## Instruction ##
-    Identify each language in the text below, and segment the text by language:
+    Return all of languages used in the given text. For each language, you 
+    should return the corresponding piece of text written in that language.
+
+    ## Format ##
+    Results should be in a JSON format with languages as keys and texts as values. For example:
+        'language_1': 'text_in_language_1',
+        'language_2': 'text_in_language_2',
+        ....
+
+    ## Context ##
     {text}
+    
+    ## Output ##
     """
 )
 
 prompt_translate = ChatPromptTemplate.from_template(
     """
     ## Instruction ##
-    Translate the text below to English:
+    Translate the given text below to English:
+    ## Context ##
     {text}
     """
 )
