@@ -1,5 +1,10 @@
 langchain
 openai
+termcolor
+panel
 os
 sys
-termcolor
+chromadb
+pypdf
+docarray
+tiktoken
