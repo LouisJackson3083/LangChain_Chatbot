@@ -41,7 +41,7 @@ class ChatBot():
         self.qa = None
         self.panels = []
         self.chat_history = []
-        self.llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+        self.llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.6)
         self.memory = ConversationBufferMemory()
         self.conversation_chain = ConversationChain(
             llm = self.llm,
@@ -50,6 +50,7 @@ class ChatBot():
         )
         self.translator_segmenter = LLMChain(llm=self.llm, prompt=prompt_segment)
         self.translator_translate = LLMChain(llm=self.llm, prompt=prompt_translate)
+        self.fine_text_splitter = RecursiveCharacterTextSplitter(chunk_size=26, chunk_overlap=4)
 
     def call_load_db(self, count):
         if count == 0 or file_input.value is None:  # init or no file specified :
@@ -87,16 +88,21 @@ class ChatBot():
         self.answer = result['answer'] 
         self.panels.extend([ # display it
             pn.Row('User:', pn.pane.Markdown(query, width=600, styles={'background-color': '#FFFFDD'})),
-            pn.Row('ChatBot:', pn.pane.Markdown(result, width=600, styles={'background-color': '#DDFFDD'}))
+            pn.Row('ChatBot:', pn.pane.Markdown(str(result['answer']), width=600, styles={'background-color': '#DDFFDD'}))
         ])
         panel_data_conversation_input.value = ''  #clears loading indicator when cleared
         return pn.WidgetBox(*self.panels,scroll=True)
     
+    def translator_fine_splitter(self, query):
+        print(self.fine_text_splitter.split_text(query))
+        return None
+
     def translator(self, query):
         if not query: # if there are no queries
             return pn.WidgetBox(pn.Row('User:', pn.pane.Markdown("", width=600)), scroll=True)
-        result_segment = self.translator_segmenter({'text':query})['text']
+        # result_translate_fine = self.translator_fine_splitter(query)
         result_translate = self.translator_translate({'text':query})['text']
+        result_segment = self.translator_segmenter({'text':query})['text']
         self.panels.extend([ # display it
             pn.Row('User:', pn.pane.Markdown(query, width=600, styles={'background-color': '#FFFFDD'})),
             pn.Row('AI Translation:', pn.pane.Markdown(result_translate, width=600, styles={'background-color': '#DDFFDD'})),
